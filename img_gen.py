@@ -1,9 +1,9 @@
 from PIL import Image
 
-SIZE = 100
+SIZE = 1000
 img = Image.new("RGB", (SIZE, SIZE))
 
-with open('out2.txt', 'r') as fir:
+with open('wg.txt', 'r') as fir:
     for j in range(SIZE):
         l = fir.readline()
         for i in range(SIZE):
@@ -22,4 +22,4 @@ with open('out2.txt', 'r') as fir:
 
             img.putpixel((i, j), c)
 
-img.save('img2.jpeg', "JPEG")
+img.save('imgwg.jpeg', "JPEG")

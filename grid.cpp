@@ -176,16 +176,6 @@ Grid get_random_grid(int size) {
     prev_g = new_g;
     new_g = temp;
 
-    // for (int i = 0; i < 2 * size; i++) {
-    //   for (int j = 0; j < 2 * size; j++) {
-    //     new_g.set_cell(i, j, Ext);
-    //   }
-    // }
-    // std::vector<SquarePos> pos = get_positions(size, s);
-    // std::for_each(std::execution::par, pos.begin(), pos.end(),
-    //               [&](SquarePos &pos) {
-    //                 update_grid_from_previous(new_g, pos.x, pos.y, prev_g);
-    //               });
     const int offset = size - s;
     for (int i = 0; i < s - 1; i++) {
       for (int j = 0; j <= i; j++) {

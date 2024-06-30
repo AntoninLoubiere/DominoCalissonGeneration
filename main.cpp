@@ -3,7 +3,8 @@
 #include <ctime>
 #include <iostream>
 
-#include "grid.hpp"
+// #include "grid.hpp"
+#include "weighted_grid.hpp"
 
 int main() {
   //   std::cout << "Taille grille" << std ::endl;
@@ -21,8 +22,10 @@ int main() {
   //   g = Grid(g);
   //   g = Grid(g);
   //   std::cout << g;
-  Grid g = get_random_grid(taille);
+  //   Grid g = get_random_grid(taille);
   //   std::cout << g;
-  std::cout << "End\n";
   //   g.to_svg(std::cout);
+  WeightedGrid wg = weighted_grid_square(taille);
+  //   std::cout << wg << "\n";
+  std::cout << get_random_weighted_grid(wg);
 }
