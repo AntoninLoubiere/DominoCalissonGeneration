@@ -2,15 +2,16 @@
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
+#include <ostream>
 
 // #include "grid.hpp"
 #include "weighted_grid.hpp"
 
 int main() {
-  //   std::cout << "Taille grille" << std ::endl;
+  //   std::cout << "Tai    lle grille" << std ::endl;
   int taille;
   std::cin >> taille;
-  srand(time(NULL));
+  srand(clock());
 
   //   Grid g(1);
   //   if (rand() % 2 == 0)
@@ -25,7 +26,12 @@ int main() {
   //   Grid g = get_random_grid(taille);
   //   std::cout << g;
   //   g.to_svg(std::cout);
-  WeightedGrid wg = weighted_grid_square(taille);
-  //   std::cout << wg << "\n";
-  std::cout << get_random_weighted_grid(wg);
+  // WeightedGrid wg = weighted_grid_square(taille);
+  std::cout << taille << "\n";
+  // //   std::cout << wg << "\n";
+  // std::cout << wg.get_random_weighted_grid();
+
+  WeightedGrid wg = weighted_grid_import_square(taille, std::cin);
+  // std::cout << wg << std::endl;
+  std::cout << wg.get_random_weighted_grid() << std::endl;
 }

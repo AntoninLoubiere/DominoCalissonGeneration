@@ -1,2 +1,6 @@
 dominos
 *.o
+out
+imgs
+*.jpg
+*.jpeg
