@@ -3,6 +3,7 @@
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
+#include <istream>
 #include <ostream>
 
 #include "grid.hpp"
@@ -17,71 +18,51 @@ const double INV_SQRT2 = 0.7071067811865475244008443622;
 
 WeightedGrid::WeightedGrid(int size) : size_(size), grid_(size * size){};
 
-WeightedGrid weighted_grid_all(int size) {
-  WeightedGrid wg(size);
-  for (int i = 0; i < size; i++) {
-    for (int j = 0; j < size; j++) {
+void WeightedGrid::set_constant(int val) {
+  for (int i = 0; i < size_; i++) {
+    for (int j = 0; j < size_; j++) {
       for (int k = 0; k < 4; k++) {
-        wg.grid_[i * size + j].cells[k] = 1;
+        grid_[i * size_ + j].cells[k] = val;
       }
     }
   }
-  return wg;
 }
 
-WeightedGrid weighted_grid_empty(int size) {
-  WeightedGrid wg(size);
-  for (int i = 0; i < size; i++) {
-    for (int j = 0; j < size; j++) {
-      for (int k = 0; k < 4; k++) {
-        wg.grid_[i * size + j].cells[k] = 0;
-      }
-    }
-  }
-  return wg;
-}
-
-WeightedGrid weighted_grid_square(int size) {
-  WeightedGrid wg = weighted_grid_all(size);
-
-  const int sq_size = size / 2;
+void WeightedGrid::set_square() {
+  const int sq_size = size_ / 2;
   for (int x = 0; x < sq_size; x++) {
-    wg.grid_[wg.linearise(x, sq_size - 1)].cells[1] = 0;
-    wg.grid_[wg.linearise(x, sq_size - 1)].cells[3] = 0;
+    grid_[linearise(x, sq_size - 1)].cells[1] = 0;
+    grid_[linearise(x, sq_size - 1)].cells[3] = 0;
   }
 
   for (int i = 0; i < sq_size; i++) {
-    const int y = size + 2 * i - sq_size;
-    wg.grid_[wg.linearise(i, y)].cells[0] = 0;
-    wg.grid_[wg.linearise(i, y)].cells[2] = 0;
-    wg.grid_[wg.linearise(y - i, y)].cells[0] = 0;
-    wg.grid_[wg.linearise(y - i, y)].cells[2] = 0;
+    const int y = size_ + 2 * i - sq_size;
+    grid_[linearise(i, y)].cells[0] = 0;
+    grid_[linearise(i, y)].cells[2] = 0;
+    grid_[linearise(y - i, y)].cells[0] = 0;
+    grid_[linearise(y - i, y)].cells[2] = 0;
   }
 
-  for (int x = size - sq_size; x < size; x++) {
-    wg.grid_[wg.linearise(x, size - sq_size - 1)].cells[1] = 0;
-    wg.grid_[wg.linearise(x, size - sq_size - 1)].cells[3] = 0;
+  for (int x = size_ - sq_size; x < size_; x++) {
+    grid_[linearise(x, size_ - sq_size - 1)].cells[1] = 0;
+    grid_[linearise(x, size_ - sq_size - 1)].cells[3] = 0;
   }
-
-  return wg;
 }
 
-WeightedGrid weighted_grid_import_square(int size, std::istream &is) {
-  WeightedGrid wg = weighted_grid_square(size);
-  const int sq_size = size / 2;
+void WeightedGrid::import_inside_square(std::istream &is) {
+  const int sq_size = size_ / 2;
 
-  for (int y = sq_size; y < 2 * size - sq_size - 1; y++) {
-    for (int x = sq_size; x < 2 * size - sq_size; x++) {
-      is >> *wg.vertical_segment(x, y);
+  for (int y = sq_size; y < 2 * size_ - sq_size - 1; y++) {
+    for (int x = sq_size; x < 2 * size_ - sq_size; x++) {
+      is >> *vertical_segment(x, y);
     }
   }
 
-  for (int y = sq_size; y < 2 * size - sq_size; y++) {
-    for (int x = sq_size; x < 2 * size - sq_size - 1; x++) {
-      is >> *wg.horizontal_segment(x, y);
+  for (int y = sq_size; y < 2 * size_ - sq_size; y++) {
+    for (int x = sq_size; x < 2 * size_ - sq_size - 1; x++) {
+      is >> *horizontal_segment(x, y);
     }
   }
-  return wg;
 }
 
 double *WeightedGrid::cell(int x, int y) {
@@ -233,7 +214,7 @@ void WeightedGrid::update_wgrid_from_previous(Grid &g, int wx, int wy, int gx,
   }
 }
 
-Grid WeightedGrid::get_random_weighted_grid() {
+Grid WeightedGrid::get_random_weighted_grid(std::ostream *os) {
   Grid g1 = Grid(size_);
   Grid g2 = Grid(size_);
   Grid &prev_g = g1;
@@ -266,8 +247,8 @@ Grid WeightedGrid::get_random_weighted_grid() {
       wg.update_wgrid_from_previous(new_g, j, s - 1, offset + 2 * j, size_ - 1,
                                     prev_g);
     }
-    std::cout << s << std::endl;
-    std::cout << new_g;
+
+    if (os != NULL) *os << s << std::endl << new_g;
   }
   return new_g;
 }

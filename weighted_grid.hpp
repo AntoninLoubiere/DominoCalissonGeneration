@@ -12,14 +12,12 @@ typedef struct {
 class WeightedGrid {
  public:
   WeightedGrid(int size);
-  //   WeightedGrid(WeightedGrid &wg);
 
   double *cell(int x, int y);
 
-  friend WeightedGrid weighted_grid_square(int size);
-  friend WeightedGrid weighted_grid_all(int size);
-  friend WeightedGrid weighted_grid_empty(int size);
-  friend std::ostream &operator<<(std::ostream &os, const WeightedGrid &g);
+  void set_constant(int val);
+  void set_square();
+  void import_inside_square(std::istream &is);
 
   int start_x(int y) const;
   int end_x(int y) const;
@@ -28,9 +26,10 @@ class WeightedGrid {
   double *horizontal_segment(int tx, int ty);
 
   WeightedGrid get_prev_weighted_grid();
-  Grid get_random_weighted_grid();
+  Grid get_random_weighted_grid(std::ostream *os = NULL);
 
   int size() const;
+  friend std::ostream &operator<<(std::ostream &os, const WeightedGrid &g);
 
  private:
   int linearise(int x, int y) const;
@@ -41,8 +40,3 @@ class WeightedGrid {
   int size_;
   std::vector<WeightedCell> grid_;
 };
-
-WeightedGrid weighted_grid_square(int size);
-WeightedGrid weighted_grid_all(int size);
-WeightedGrid weighted_grid_empty(int size);
-WeightedGrid weighted_grid_import_square(int size, std::istream &is);

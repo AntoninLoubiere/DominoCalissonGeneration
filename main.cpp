@@ -7,8 +7,8 @@
 // #include "grid.hpp"
 #include "weighted_grid.hpp"
 
-int main() {
-  //   std::cout << "Tai    lle grille" << std ::endl;
+int main(int argc, char *argv[]) {
+  //   std::cout << "Taille grille" << std ::endl;
   int taille;
   std::cin >> taille;
   srand(clock());
@@ -31,7 +31,8 @@ int main() {
   // //   std::cout << wg << "\n";
   // std::cout << wg.get_random_weighted_grid();
 
-  WeightedGrid wg = weighted_grid_import_square(taille, std::cin);
-  // std::cout << wg << std::endl;
+  WeightedGrid wg(taille);
+  wg.set_square();
+  wg.import_inside_square(std::cin);
   std::cout << wg.get_random_weighted_grid() << std::endl;
 }
