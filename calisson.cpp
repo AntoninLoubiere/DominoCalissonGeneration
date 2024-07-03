@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
 #include <iostream>
-#include <ostream>
 
 // #include "grid.hpp"
 #include "weighted_grid.hpp"
@@ -26,14 +26,17 @@ int main(int argc, char *argv[]) {
   //   std::cout << g;
   //   g.to_svg(std::cout);
   // WeightedGrid wg = weighted_grid_square(taille);
-  std::cout << taille << "\n";
   // //   std::cout << wg << "\n";
   // std::cout << wg.get_random_weighted_grid();
 
-  WeightedGrid wg(taille);
+  WeightedGrid wg(wg_size_from_hex_size(taille));
+  std::cout << wg.size() << "\n";
   wg.set_constant(1);
-  wg.remove_square();
-  wg.import_inside_square(std::cin);
-  wg.get_random_weighted_grid();
-  // std::cout << wg.get_random_weighted_grid() << std::endl;
+  wg.remove_hex();
+  std::ofstream wgf("/tmp/wg.svg");
+  wg.to_svg(wgf);
+  wgf.close();
+  //   std::cout << wg << std::endl;
+  //   std::cout << wg.get_random_weighted_grid(&std::cout);
+  std::cout << wg.get_random_weighted_grid() << std::endl;
 }

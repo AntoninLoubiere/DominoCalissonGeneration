@@ -28,7 +28,7 @@ void WeightedGrid::set_constant(int val) {
   }
 }
 
-void WeightedGrid::set_square() {
+void WeightedGrid::remove_square() {
   const int sq_size = size_ / 2;
   for (int x = 0; x < sq_size; x++) {
     grid_[linearise(x, sq_size - 1)].cells[1] = 0;
@@ -46,6 +46,25 @@ void WeightedGrid::set_square() {
   for (int x = size_ - sq_size; x < size_; x++) {
     grid_[linearise(x, size_ - sq_size - 1)].cells[1] = 0;
     grid_[linearise(x, size_ - sq_size - 1)].cells[3] = 0;
+  }
+}
+
+void WeightedGrid::remove_hex() {
+  const int hex_size = hex_size_from_wg_size(size_);
+
+  *vertical_segment(hex_size, size_ - hex_size - 1) = 0;
+  *vertical_segment(hex_size, size_ + hex_size - 1) = 0;
+
+  for (int y = 0; y < hex_size; y++) {
+    *horizontal_segment(hex_size + 1 + y, size_ - hex_size + y) = 0;
+    *vertical_segment(hex_size + 1 + y, size_ - hex_size + y - 1) = 0;
+    *horizontal_segment(hex_size + 1 + y, size_ + hex_size - y - 1) = 0;
+    *vertical_segment(hex_size + 1 + y, size_ + hex_size - y - 1) = 0;
+
+    for (int x = 0; x <= y; x++) {
+      *vertical_segment(hex_size - y + 2 * x, size_ - hex_size + y) = 0;
+      *vertical_segment(hex_size - y + 2 * x, size_ + hex_size - y - 2) = 0;
+    }
   }
 }
 
@@ -92,6 +111,76 @@ std::ostream &operator<<(std::ostream &os, const WeightedGrid &g) {
     os << "\n";
   }
   return os;
+}
+
+const int CELL_SIZE = 20;
+const int SPACE_BETWEEN = 26;
+const int EL_SIZE = CELL_SIZE + SPACE_BETWEEN;
+void cell_svg(std::ostream &os, int x, int y) {
+  os << "<rect x=\"" << x * EL_SIZE << "\" y=\"" << y * EL_SIZE << "\" width=\""
+     << CELL_SIZE << "\" height=\"" << CELL_SIZE << "\"/>";
+}
+
+void cell_link(std::ostream &os, int fromx, int fromy, int tox, int toy,
+               float val) {
+  os << "<line stroke=\"black\" x1=\"" << EL_SIZE * fromx + CELL_SIZE / 2
+     << "\" y1=\"" << EL_SIZE * fromy + CELL_SIZE / 2 << "\" x2=\""
+     << EL_SIZE * tox + CELL_SIZE / 2 << " \" y2=\""
+     << EL_SIZE * toy + CELL_SIZE / 2 << "\" opacity=\"" << (val >= 1 ? 1 : val)
+     << "\"><title>" << val << "</title></line>";
+
+  os << "<text font-size=\"10\" text-anchor=\"start\" x=\""
+     << EL_SIZE * (fromx + tox) / 2 + CELL_SIZE / 2 + 2 << "\" y =\""
+     << EL_SIZE * (fromy + toy) / 2 + CELL_SIZE / 2 - 2 << "\">" << val
+     << "</text>";
+}
+
+void cell_activated(std::ostream &os, int x, int y) {
+  os << "<rect x=\"" << x * EL_SIZE + CELL_SIZE / 2 << "\" y=\""
+     << y * EL_SIZE + CELL_SIZE / 2 << "\" width=\"" << EL_SIZE
+     << "\" height=\"" << EL_SIZE << "\" fill=\"lightgray\"/>";
+}
+
+void WeightedGrid::to_svg(std::ostream &os) {
+  const int TOTAL_SIZE = (2 * size_) * EL_SIZE;
+  os << "<svg viewBox=\"0 0 " << TOTAL_SIZE << " " << TOTAL_SIZE
+     << "\" xmlns=\"http://www.w3.org/2000/svg\">";
+
+  for (int y = 0; y < size_; y++) {
+    for (int x = 0; x <= y; x++) {
+      const int cx = 2 * x + size_ - y - 1;
+      double *cell = grid_[linearise(x, y)].cells;
+      cell_activated(os, cx, y);
+      cell_link(os, cx, y, cx + 1, y, cell[0]);
+      cell_link(os, cx, y, cx, y + 1, cell[1]);
+      cell_link(os, cx, y + 1, cx + 1, y + 1, cell[2]);
+      cell_link(os, cx + 1, y, cx + 1, y + 1, cell[3]);
+    }
+  }
+
+  for (int y = 0; y < size_ - 1; y++) {
+    for (int x = 0; x < size_ - y - 1; x++) {
+      const int cx = 2 * x + y + 1;
+      const int cy = y + size_;
+      double *cell = grid_[linearise(x + y + 1, y)].cells;
+      cell_activated(os, cx, cy);
+      cell_link(os, cx, cy, cx + 1, cy, cell[0]);
+      cell_link(os, cx, cy, cx, cy + 1, cell[1]);
+      cell_link(os, cx, cy + 1, cx + 1, cy + 1, cell[2]);
+      cell_link(os, cx + 1, cy, cx + 1, cy + 1, cell[3]);
+    }
+  }
+
+  for (int y = 0; y < size_; y++) {
+    for (int x = size_ - y - 1; x < size_; x++) {
+      cell_svg(os, x, y);
+      cell_svg(os, 2 * size_ - x - 1, y);
+      cell_svg(os, x, 2 * size_ - y - 1);
+      cell_svg(os, 2 * size_ - x - 1, 2 * size_ - y - 1);
+    }
+  }
+
+  os << "</svg>";
 }
 
 int WeightedGrid::start_x(int y) const {
@@ -145,25 +234,32 @@ int WeightedGrid::linearise(int x, int y) const {
 
 void WeightedGrid::update_weighted_grid_cell(int x, int y, WeightedGrid *wg) {
   double *c = cell(x, y);
-  double coeffs[4];
-  for (int didx = 0; didx < 4; didx++) {
-    const Dir &d = DIRS[(didx + 2) % 4];
-    coeffs[didx] = wg->cell(x + d.dx, y + d.dy)[didx];
-  }
-
-  const double dp = coeffs[0] * coeffs[2] + coeffs[1] * coeffs[3];
-  const double tot = coeffs[0] + coeffs[1] + coeffs[2] + coeffs[3];
-  if (dp != 0) {
-    for (int d = 0; d < 4; d++) {
-      c[d] = coeffs[d] / dp;
-    }
-  } else if (tot != 0) {
-    for (int d = 0; d < 4; d++) {
-      c[d] = coeffs[d] / tot;
-    }
-  } else {
-    for (int d = 0; d < 4; d++) {
-      c[d] = INV_SQRT2;
+  for (int d = 0; d < 4; d++) {
+    // Edge-erasing
+    const int d_suiv = (d + 1) % 4;
+    const Dir &dir_suiv = DIRS[d_suiv];
+    const int d_prev = (d - 1) % 4;
+    const Dir &dir_prev = DIRS[d_prev];
+    if ((wg->cell(x + dir_suiv.dx, y + dir_suiv.dy)[d] == 0 &&
+         wg->cell(x + dir_suiv.dx, y + dir_suiv.dy)[d_prev] == 0) ||
+        (wg->cell(x + dir_prev.dx, y + dir_prev.dy)[d] == 0 &&
+         wg->cell(x + dir_prev.dx, y + dir_prev.dy)[d_suiv] == 0)) {
+      c[d] = 0;
+    } else {
+      // Pre-computation
+      const Dir &dir = DIRS[d];
+      const double *prev_cell = wg->cell(x + dir.dx, y + dir.dy);
+      const float dp =
+          prev_cell[0] * prev_cell[2] + prev_cell[1] * prev_cell[3];
+      const float tot =
+          prev_cell[0] + prev_cell[1] + prev_cell[2] + prev_cell[3];
+      if (dp != 0) {
+        c[d] = prev_cell[d] / dp;
+      } else if (tot != 0) {
+        c[d] = prev_cell[d] == 0 ? 1. / tot : prev_cell[d] / tot;
+      } else {
+        c[d] = INV_SQRT2;
+      }
     }
   }
 }
@@ -205,8 +301,13 @@ void WeightedGrid::update_wgrid_from_previous(Grid &g, int wx, int wy, int gx,
     const double v = c[1] * c[3];
     const double dp = h + v;
     const double val = dp * rand();
+    // std::cout << std::endl << g;
+    // std::cout << *this << std::endl;
+    // std::cout << "Wx: " << wx << " Wy: " << wy << "\n";
+    // std::cout << "H: " << h << " V: " << v << "\n";
+    // std::cout << "dp: " << dp << " val: " << val << "\n";
     assert(dp != 0);
-    if (val < v * (RAND_MAX + 1.)) {
+    if (/*h == 0 || */ val < v * (RAND_MAX + 1.)) {
       g.set_square_vertical(gx, gy);
     } else {
       g.set_square_horizontal(gx, gy);
@@ -222,8 +323,18 @@ Grid WeightedGrid::get_random_weighted_grid(std::ostream *os) {
 
   std::vector<WeightedGrid> wgs(size_, WeightedGrid(0));
   wgs[size_ - 1] = *this;
+  // std::ostringstream filename;
+  // filename << "/tmp/wg_" << size_ << ".svg";
+  // std::ofstream outfile(filename.str());
+  // to_svg(outfile);
+  // outfile.close();
   for (int i = size_ - 2; i >= 0; i--) {
     wgs[i] = wgs[i + 1].get_prev_weighted_grid();
+    // std::ostringstream filename;
+    // filename << "/tmp/wg_" << i + 1 << ".svg";
+    // std::ofstream outfile(filename.str());
+    // wgs[i].to_svg(outfile);
+    // outfile.close();
   }
 
   for (int s = 1; s <= size_; s++) {
@@ -252,3 +363,7 @@ Grid WeightedGrid::get_random_weighted_grid(std::ostream *os) {
   }
   return new_g;
 }
+
+int hex_size_from_wg_size(int s) { return s / 2; }
+
+int wg_size_from_hex_size(int s) { return 2 * s - 1; }

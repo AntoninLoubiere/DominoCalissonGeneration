@@ -1,11 +1,11 @@
 from PIL import Image, ImageDraw
 import sys
 
-CROPPED = True
+CROPPED = False
 SIZE = int(input())
 if not CROPPED:
     SIZE *= 2
-PIXEL_SIZE = min(1, 2000 // SIZE)
+PIXEL_SIZE = max(1, 2000 // SIZE)
 img = Image.new("RGB", (SIZE * PIXEL_SIZE, SIZE * PIXEL_SIZE))
 draw = ImageDraw.Draw(img)
 # COLORS = [(0xFF, 0xD7, 0x00), (0xF0, 0x00, 0x00), (0x00, 0x00, 0xCE), (0x00, 0xD1, 0xD1)]

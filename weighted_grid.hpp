@@ -9,6 +9,9 @@ typedef struct {
   double cells[4];
 } WeightedCell;
 
+int hex_size_from_wg_size(int s);
+int wg_size_from_hex_size(int s);
+
 class WeightedGrid {
  public:
   WeightedGrid(int size);
@@ -16,7 +19,8 @@ class WeightedGrid {
   double *cell(int x, int y);
 
   void set_constant(int val);
-  void set_square();
+  void remove_square();
+  void remove_hex();
   void import_inside_square(std::istream &is);
 
   int start_x(int y) const;
@@ -30,6 +34,8 @@ class WeightedGrid {
 
   int size() const;
   friend std::ostream &operator<<(std::ostream &os, const WeightedGrid &g);
+
+  void to_svg(std::ostream &os);
 
  private:
   int linearise(int x, int y) const;
