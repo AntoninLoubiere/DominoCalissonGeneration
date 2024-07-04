@@ -52,16 +52,18 @@ void WeightedGrid::remove_square() {
 void WeightedGrid::remove_hex() {
   const int hex_size = hex_size_from_wg_size(size_);
 
-  *vertical_segment(hex_size, size_ - hex_size - 1) = 0;
-  *vertical_segment(hex_size, size_ + hex_size - 1) = 0;
+  for (int i = 0; i < 2 * hex_size - 1; i++) {
+    *vertical_segment(hex_size + i, size_ - hex_size - 1) = 0;
+    *vertical_segment(hex_size + i, size_ + hex_size - 1) = 0;
+  }
 
   for (int y = 0; y < hex_size; y++) {
-    *horizontal_segment(hex_size + 1 + y, size_ - hex_size + y) = 0;
-    *vertical_segment(hex_size + 1 + y, size_ - hex_size + y - 1) = 0;
-    *horizontal_segment(hex_size + 1 + y, size_ + hex_size - y - 1) = 0;
-    *vertical_segment(hex_size + 1 + y, size_ + hex_size - y - 1) = 0;
+    *horizontal_segment(3 * hex_size - 1 + y, size_ - hex_size + y) = 0;
+    *vertical_segment(3 * hex_size - 1 + y, size_ - hex_size + y - 1) = 0;
+    *horizontal_segment(3 * hex_size - 1 + y, size_ + hex_size - y - 1) = 0;
+    *vertical_segment(3 * hex_size - 1 + y, size_ + hex_size - y - 1) = 0;
 
-    for (int x = 0; x <= y; x++) {
+    for (int x = 0; x < y + hex_size; x++) {
       *vertical_segment(hex_size - y + 2 * x, size_ - hex_size + y) = 0;
       *vertical_segment(hex_size - y + 2 * x, size_ + hex_size - y - 2) = 0;
     }
@@ -301,11 +303,6 @@ void WeightedGrid::update_wgrid_from_previous(Grid &g, int wx, int wy, int gx,
     const double v = c[1] * c[3];
     const double dp = h + v;
     const double val = dp * rand();
-    // std::cout << std::endl << g;
-    // std::cout << *this << std::endl;
-    // std::cout << "Wx: " << wx << " Wy: " << wy << "\n";
-    // std::cout << "H: " << h << " V: " << v << "\n";
-    // std::cout << "dp: " << dp << " val: " << val << "\n";
     assert(dp != 0);
     if (/*h == 0 || */ val < v * (RAND_MAX + 1.)) {
       g.set_square_vertical(gx, gy);
@@ -323,18 +320,8 @@ Grid WeightedGrid::get_random_weighted_grid(std::ostream *os) {
 
   std::vector<WeightedGrid> wgs(size_, WeightedGrid(0));
   wgs[size_ - 1] = *this;
-  // std::ostringstream filename;
-  // filename << "/tmp/wg_" << size_ << ".svg";
-  // std::ofstream outfile(filename.str());
-  // to_svg(outfile);
-  // outfile.close();
   for (int i = size_ - 2; i >= 0; i--) {
     wgs[i] = wgs[i + 1].get_prev_weighted_grid();
-    // std::ostringstream filename;
-    // filename << "/tmp/wg_" << i + 1 << ".svg";
-    // std::ofstream outfile(filename.str());
-    // wgs[i].to_svg(outfile);
-    // outfile.close();
   }
 
   for (int s = 1; s <= size_; s++) {
@@ -364,6 +351,6 @@ Grid WeightedGrid::get_random_weighted_grid(std::ostream *os) {
   return new_g;
 }
 
-int hex_size_from_wg_size(int s) { return s / 2; }
+int hex_size_from_wg_size(int s) { return (s + 1) / 3; }
 
-int wg_size_from_hex_size(int s) { return 2 * s - 1; }
+int wg_size_from_hex_size(int s) { return 3 * s - 1; }

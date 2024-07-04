@@ -33,9 +33,6 @@ int main(int argc, char *argv[]) {
   std::cout << wg.size() << "\n";
   wg.set_constant(1);
   wg.remove_hex();
-  std::ofstream wgf("/tmp/wg.svg");
-  wg.to_svg(wgf);
-  wgf.close();
   //   std::cout << wg << std::endl;
   //   std::cout << wg.get_random_weighted_grid(&std::cout);
   std::cout << wg.get_random_weighted_grid() << std::endl;
