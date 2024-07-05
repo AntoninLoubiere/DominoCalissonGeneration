@@ -2,9 +2,15 @@
 #include <ostream>
 #include <vector>
 
-enum GridElement { Ext, None, VT, VB, HL, HR };
+namespace Dominos {
+class Grid;
+};
 
-std::ostream &operator<<(std::ostream &os, GridElement el);
+std::ostream &operator<<(std::ostream &os, const Dominos::Grid &g);
+
+namespace Dominos {
+
+enum GridElement { Ext, None, VT, VB, HL, HR };
 
 class Grid {
  public:
@@ -16,7 +22,7 @@ class Grid {
   GridElement safe_cell(int x, int y) const;
   void set_cell(int x, int y, GridElement el);
 
-  friend std::ostream &operator<<(std::ostream &os, const Grid &g);
+  friend std::ostream & ::operator<<(std::ostream & os, const Grid & g);
 
   int start_x(int y) const;
   int end_x(int y) const;
@@ -41,3 +47,6 @@ class Grid {
 };
 
 Grid get_random_grid(int size);
+}  // namespace Dominos
+
+std::ostream &operator<<(std::ostream &os, Dominos::GridElement el);

@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <vector>
+using namespace Dominos;
 
 Grid::Grid(int size) : size_(size), grid_((2 * size_) * (2 * size_), Ext) {
   for (int y = 0; y < 2 * size_; y++) {

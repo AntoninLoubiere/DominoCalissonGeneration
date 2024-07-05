@@ -13,6 +13,8 @@ typedef struct {
   int dy;
 } Dir;
 
+using namespace Dominos;
+
 const Dir DIRS[4] = {{0, 0}, {0, 1}, {1, 2}, {1, 1}};
 const double INV_SQRT2 = 0.7071067811865475244008443622;
 
@@ -351,6 +353,6 @@ Grid WeightedGrid::get_random_weighted_grid(std::ostream *os) {
   return new_g;
 }
 
-int hex_size_from_wg_size(int s) { return (s + 1) / 3; }
+int Dominos::hex_size_from_wg_size(int s) { return (s + 1) / 3; }
 
-int wg_size_from_hex_size(int s) { return 3 * s - 1; }
+int Dominos::wg_size_from_hex_size(int s) { return 3 * s - 1; }

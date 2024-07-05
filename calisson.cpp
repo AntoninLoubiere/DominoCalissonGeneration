@@ -1,9 +1,9 @@
 #include <cstdlib>
 #include <ctime>
-#include <fstream>
 #include <iostream>
 
 // #include "grid.hpp"
+#include "calisson_grid.hpp"
 #include "weighted_grid.hpp"
 
 int main(int argc, char *argv[]) {
@@ -29,11 +29,11 @@ int main(int argc, char *argv[]) {
   // //   std::cout << wg << "\n";
   // std::cout << wg.get_random_weighted_grid();
 
-  WeightedGrid wg(wg_size_from_hex_size(taille));
-  std::cout << wg.size() << "\n";
+  Dominos::WeightedGrid wg(Dominos::wg_size_from_hex_size(taille));
+  // std::cout << wg.size() << "\n";
   wg.set_constant(1);
   wg.remove_hex();
-  //   std::cout << wg << std::endl;
-  //   std::cout << wg.get_random_weighted_grid(&std::cout);
-  std::cout << wg.get_random_weighted_grid() << std::endl;
+  Dominos::Grid g = wg.get_random_weighted_grid();
+  Calissons::Grid c(g);
+  std::cout << c;
 }

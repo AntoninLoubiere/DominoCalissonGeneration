@@ -5,6 +5,14 @@
 
 #include "grid.hpp"
 
+namespace Dominos {
+class WeightedGrid;
+}
+
+std::ostream &operator<<(std::ostream &os, const Dominos::WeightedGrid &g);
+
+namespace Dominos {
+
 typedef struct {
   double cells[4];
 } WeightedCell;
@@ -33,7 +41,7 @@ class WeightedGrid {
   Grid get_random_weighted_grid(std::ostream *os = NULL);
 
   int size() const;
-  friend std::ostream &operator<<(std::ostream &os, const WeightedGrid &g);
+  friend std::ostream & ::operator<<(std::ostream & os, const WeightedGrid & g);
 
   void to_svg(std::ostream &os);
 
@@ -46,3 +54,4 @@ class WeightedGrid {
   int size_;
   std::vector<WeightedCell> grid_;
 };
+}  // namespace Dominos
