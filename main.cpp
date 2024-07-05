@@ -5,6 +5,7 @@
 
 // #include "grid.hpp"
 #include "weighted_grid.hpp"
+using namespace Dominos;
 
 int main(int argc, char *argv[]) {
   //   std::cout << "Taille grille" << std ::endl;

@@ -35,5 +35,6 @@ int main(int argc, char *argv[]) {
   wg.remove_hex();
   Dominos::Grid g = wg.get_random_weighted_grid();
   Calissons::Grid c(g);
+  c.segmentify();
   std::cout << c;
 }
