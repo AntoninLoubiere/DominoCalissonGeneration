@@ -9,7 +9,7 @@ all: main.o grid.o weighted_grid.o
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
-calisson: calisson.o grid.o weighted_grid.o calisson_grid.o
+calisson: calisson.o grid.o weighted_grid.o calisson_grid.o helper.o
 	$(CXX) -o calisson $^ $(LDFLAGS)
 
 clean:

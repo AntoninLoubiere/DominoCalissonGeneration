@@ -3,10 +3,8 @@
 #include <cassert>
 
 #include "grid.hpp"
+#include "helper.hpp"
 #include "weighted_grid.hpp"
-
-const char *BASE64_CONVERTER =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 
 using namespace Calissons;
 
@@ -150,15 +148,17 @@ int Grid::linearise(const Coord &c) const {
 }
 
 std::ostream &operator<<(std::ostream &os, const Grid &c) {
-  os << (char)(c.size() + 4 * 0x20);
+  ByteCompressor bc(os, 2);
+  os << (char)(c.size() + 2 * 0x20);
   for (int i = 0; i < 2 * c.size_; i++) {
     const int str = c.start_j(i);
     const int end = c.end_j(i);
     for (int j = str; j < end; j++) {
-      if (j > str || i < c.size_) os << (char)c.edge({i, j, 0});
-      if (i > 0) os << (char)c.edge({i, j, 1});
-      if (j < end - 1 || i < c.size_) os << (char)c.edge({i, j, 2});
+      if (j > str || i < c.size_) bc << c.edge({i, j, 0});
+      if (i > 0) bc << c.edge({i, j, 1});
+      if (j < end - 1 || i < c.size_) bc << c.edge({i, j, 2});
     }
   }
+  bc.end();
   return os;
 }
