@@ -162,3 +162,36 @@ std::ostream &operator<<(std::ostream &os, const Grid &c) {
   bc.end();
   return os;
 }
+
+void Grid::to_image_blueprint_seg(std::ostream &os, const Coord &c) {
+  switch (edge(c)) {
+    case Calissons::Edge:
+      os << "E ";
+      break;
+
+    case Calissons::Losange:
+      os << "L ";
+      break;
+
+    case Calissons::EdgeVar:
+      os << "e ";
+      break;
+
+    default:
+      return;
+  }
+  os << c.i << " " << c.j << " " << c.d << "\n";
+}
+
+void Grid::to_image_blueprint(std::ostream &os) {
+  os << size_ << "\n";
+  for (int i = 0; i < 2 * size_; i++) {
+    const int str = start_j(i);
+    const int end = end_j(i);
+    for (int j = str; j < end; j++) {
+      if (j > str || i < size_) to_image_blueprint_seg(os, {i, j, 0});
+      if (i > 0) to_image_blueprint_seg(os, {i, j, 1});
+      if (j < end - 1 || i < size_) to_image_blueprint_seg(os, {i, j, 2});
+    }
+  }
+}

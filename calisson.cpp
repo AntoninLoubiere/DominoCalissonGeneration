@@ -36,5 +36,6 @@ int main(int argc, char *argv[]) {
   Dominos::Grid g = wg.get_random_weighted_grid();
   Calissons::Grid c(g);
   c.segmentify();
-  std::cout << c;
+  c.to_image_blueprint(std::cout);
+  // std::cout << c;
 }

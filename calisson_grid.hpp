@@ -40,10 +40,13 @@ class Grid {
 
   int size() const;
 
+  void to_image_blueprint(std::ostream& os);
+
   friend std::ostream& ::operator<<(std::ostream & os, const Grid&);
 
  private:
   void segmentify_seg(const Coord& c);
+  void to_image_blueprint_seg(std::ostream& os, const Coord& c);
 
   int linearise(const Coord& c) const;
 
