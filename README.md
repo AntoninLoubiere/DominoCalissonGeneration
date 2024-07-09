@@ -37,6 +37,10 @@ Implémentation de l'algorithme décrit dans [1], [3], [4] pour paver un diamant
 #### Encodage d'un hexagone rayon 25
 ![Hexagone d'ordre 25](images/hex-25.png)
 
+#### Utilisation d'une image comme poids
+![Poisson](images/poisson.png)
+![Poisson en dominos](images/poisson_out.png)
+
 ### Documentation
 - `Dominos::WeightedGrid` représente un diamant pondéré.
 - `void WeightedGrid::set_constant(int val)` met toutes les arêtes à la valeur val.

@@ -8,11 +8,11 @@ if not CROPPED:
 PIXEL_SIZE = max(1, 500 // SIZE)
 img = Image.new("RGB", (SIZE * PIXEL_SIZE, SIZE * PIXEL_SIZE))
 draw = ImageDraw.Draw(img)
-COLORS = [(0xFF, 0xD7, 0x00), (0xF0, 0x00, 0x00), (0x00, 0x00, 0xCE), (0x00, 0xD1, 0xD1)]
+# COLORS = [(0xFF, 0xD7, 0x00), (0xF0, 0x00, 0x00), (0x00, 0x00, 0xCE), (0x00, 0xD1, 0xD1)]
 # COLORS = ["#eee", "#eee", "#111", "#111"]
 # COLORS = ["#FFE6F3", "#FFD9ED", "#0E4725", "#124D29"]
 # COLORS = ["#B8C4E6", "#ADBCE6", "#020C26", "#031133"]
-
+COLORS = ["#a5f3fc", "#99f6e4", "#083344", "#042f2e"]
 for j in range(3 * SIZE // 2  if CROPPED else SIZE):
     l = sys.stdin.readline()
     if j < SIZE // 2 and CROPPED:

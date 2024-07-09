@@ -29,8 +29,8 @@ int main(int argc, char *argv[]) {
   // g.to_svg(std::cout);
   WeightedGrid wg(taille);
   wg.set_constant(1);
-  wg.remove_hex();
-  // wg.import_inside_square(std::cin);
+  wg.remove_square();
+  wg.import_inside_square(std::cin);
   // //   std::cout << wg << "\n";
   // std::cout << wg.get_random_weighted_grid();
 
@@ -39,6 +39,6 @@ int main(int argc, char *argv[]) {
   // wg.remove_square();
   // wg.import_inside_square(std::cin);
   // wg.get_random_weighted_grid();
-  // std::cout << taille << "\n";
+  std::cout << taille << "\n";
   std::cout << wg.get_random_weighted_grid() << std::endl;
 }
