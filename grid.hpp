@@ -46,7 +46,7 @@ class Grid {
   std::vector<GridElement> grid_;
 };
 
-Grid get_random_grid(int size);
+Grid get_random_grid(int size, std::ostream *os = NULL);
 }  // namespace Dominos
 
 std::ostream &operator<<(std::ostream &os, Dominos::GridElement el);

@@ -22,19 +22,23 @@ int main(int argc, char *argv[]) {
   //   g = Grid(4, g);
   //   g = Grid(g);
   //   g = Grid(g);
-  //   std::cout << g;
-  //   Grid g = get_random_grid(taille);
-  //   std::cout << g;
-  //   g.to_svg(std::cout);
-  // WeightedGrid wg = weighted_grid_square(taille);
-  std::cout << taille << "\n";
+  // //   std::cout << g;
+  // std::cout << taille << "\n";
+  // Grid g = get_random_grid(taille, &std::cout);
+  // std::cout << g;
+  // g.to_svg(std::cout);
+  WeightedGrid wg(taille);
+  wg.set_constant(1);
+  wg.remove_hex();
+  // wg.import_inside_square(std::cin);
   // //   std::cout << wg << "\n";
   // std::cout << wg.get_random_weighted_grid();
 
-  WeightedGrid wg(taille);
-  wg.set_constant(1);
-  wg.remove_square();
-  wg.import_inside_square(std::cin);
-  wg.get_random_weighted_grid();
-  // std::cout << wg.get_random_weighted_grid() << std::endl;
+  // WeightedGrid wg(taille);
+  // wg.set_constant(1);
+  // wg.remove_square();
+  // wg.import_inside_square(std::cin);
+  // wg.get_random_weighted_grid();
+  // std::cout << taille << "\n";
+  std::cout << wg.get_random_weighted_grid() << std::endl;
 }

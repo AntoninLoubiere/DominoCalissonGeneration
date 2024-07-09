@@ -3,5 +3,4 @@ calisson
 *.o
 out
 imgs
-*.jpg
-*.jpeg
+*-creation-*/

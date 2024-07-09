@@ -167,7 +167,7 @@ typedef struct {
 //   return pos;
 // };
 
-Grid get_random_grid(int size) {
+Grid Dominos::get_random_grid(int size, std::ostream *os) {
   Grid g1 = Grid(size);
   Grid g2 = Grid(size);
   Grid &prev_g = g1;
@@ -189,6 +189,11 @@ Grid get_random_grid(int size) {
 
     for (int j = 0; j < s; j++) {
       update_grid_from_previous(new_g, offset + 2 * j, size - 1, prev_g);
+    }
+
+    if (os != NULL) {
+      *os << s << "\n";
+      *os << new_g;
     }
   }
   return new_g;

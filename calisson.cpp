@@ -28,14 +28,17 @@ int main(int argc, char *argv[]) {
   // WeightedGrid wg = weighted_grid_square(taille);
   // //   std::cout << wg << "\n";
   // std::cout << wg.get_random_weighted_grid();
+  // Calissons::Grid c(std::cin);
+  // c.solve();
 
   Dominos::WeightedGrid wg(Dominos::wg_size_from_hex_size(taille));
-  // std::cout << wg.size() << "\n";
+  // // std::cout << wg.size() << "\n";
   wg.set_constant(1);
   wg.remove_hex();
   Dominos::Grid g = wg.get_random_weighted_grid();
   Calissons::Grid c(g);
   c.segmentify();
+  // std::cout << taille << "\n";
   c.to_image_blueprint(std::cout);
   // std::cout << c;
 }
